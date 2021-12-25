@@ -1,0 +1,8 @@
+query GetChatsByRoom($roomId: ID!) {
+  chatsByRoom(roomId: $roomId) {
+    id
+    text
+    senderId
+    createdAt
+  }
+}

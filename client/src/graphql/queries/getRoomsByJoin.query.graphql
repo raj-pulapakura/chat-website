@@ -1,0 +1,7 @@
+query RoomsByJoin($userId: ID!) {
+  roomsByJoin(userId: $userId) {
+    id
+    name
+    publicId
+  }
+}

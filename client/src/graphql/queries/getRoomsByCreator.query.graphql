@@ -1,0 +1,7 @@
+query RoomsByCreator($creatorId: ID!) {
+  roomsByCreator(creatorId: $creatorId) {
+    id
+    name
+    publicId
+  }
+}
