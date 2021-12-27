@@ -7,4 +7,4 @@ chathub.ninja is a website where you can create rooms and chat with your friends
 3. Your friend will then join your room
 4. Let the chatting begin!
 
-(This is my first production website!)
+(website it currently down, please notify me if you would like to see it up)
