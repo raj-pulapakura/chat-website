@@ -1,71 +1,43 @@
 import "reflect-metadata";
-import { connectToDB } from "./utils/config/connectToDB";
+import express from "express";
+import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { UserResolver } from "./resolvers/UserResolver";
-import { RoomResolver } from "./resolvers/RoomResolver";
-import { connectToRedis } from "./utils/config/connectToRedis";
-import { TEN_YEARS, SECRET, AUTH_COOKIE } from "./constants";
-import cors from "cors";
-import express from "express";
-import session from "express-session";
-import connectRedis from "connect-redis";
-import { ChatResolver } from "./resolvers/ChatResolver";
-import { UserRoomResolver } from "./resolvers/UserRoomResolver";
+
+import { env } from "./constants";
+import { connectToDB } from "./utils/connectToDB";
+import { BookResolver } from "./features/Book/BookResolver";
+import { AuthorResolver } from "./features/Author/AuthorResolver";
 
 const main = async () => {
-  connectToDB();
   const app = express();
+
+  // Connect to database
+  await connectToDB();
 
   app.use(
     cors({
-      origin: [
-        "https://studio.apollographql.com",
-        "http://localhost:3000",
-        "https://chathub.ninja",
-      ],
       credentials: true,
       methods: ["GET", "POST", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Set-Cookie"],
-    })
-  );
-  const RedisStore = connectRedis(session);
-  const redisClient = await connectToRedis();
-
-  app.use(
-    session({
-      store: new RedisStore({
-        client: redisClient,
-      }),
-      cookie: {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: TEN_YEARS,
-        path: "/",
-      },
-      resave: false,
-      saveUninitialized: false,
-      secret: SECRET,
-      name: AUTH_COOKIE,
-      proxy: true,
+      origin: ["https://studio.apollographql.com"],
     })
   );
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, RoomResolver, ChatResolver, UserRoomResolver],
       validate: false,
+      resolvers: [BookResolver, AuthorResolver],
     }),
-    context: ({ req, res }) => ({ req, res, redis: redisClient }),
+    context: ({ req, res }) => ({ req, res }),
   });
 
   await apolloServer.start();
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(80, () => {
-    console.log("connected to server");
+  app.listen(env.PORT, () => {
+    console.log(`The server is listening on port ${env.PORT}`);
   });
 };
 

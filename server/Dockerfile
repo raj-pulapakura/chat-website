@@ -1,13 +1,13 @@
-FROM node:14-alpine
+FROM node:14
 
 WORKDIR /app
 
-COPY package.json .
+COPY package*.json .
 
 RUN npm i
 
 COPY . .
 
-EXPOSE 4000
+EXPOSE 80
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
