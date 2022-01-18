@@ -1,11 +1,11 @@
 import { Field, ObjectType } from "type-graphql";
 import { FieldError } from "../../../objects/FieldError";
-import { BookGraphql } from "../BookGraphql";
+import { AccountGraphql } from "../AccountGraphql";
 
 @ObjectType()
-export class BookGeneralResponse {
-  @Field(() => BookGraphql, { nullable: true })
-  book?: BookGraphql;
+export class AccountGeneralResponse {
+  @Field(() => AccountGraphql, { nullable: true })
+  account?: AccountGraphql;
 
   @Field(() => FieldError, { nullable: true })
   error?: FieldError;

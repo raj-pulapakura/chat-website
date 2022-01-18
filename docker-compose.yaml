@@ -11,8 +11,7 @@ services:
       MYSQL_DATABASE: main
   redis:
     image: redis
-    ports: 
-      - "6379:6379"
+    command: "redis-server --requirepass secret"
   server:
    build: ./server
    ports: 

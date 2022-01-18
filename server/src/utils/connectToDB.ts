@@ -10,7 +10,6 @@ export const connectToDB = async (): Promise<Connection> => {
     return conn;
   } catch (e) {
     console.log("Failed to connect to db because...");
-    console.log(dbConfig);
     console.error(e);
     await delay(3000);
     return await connectToDB();

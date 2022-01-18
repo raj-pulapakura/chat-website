@@ -1,13 +1,12 @@
 import { Field, ObjectType } from "type-graphql";
 import { FieldError } from "../../../objects/FieldError";
-import { AuthorGraphql } from "../AuthorGraphql";
+import { RoomGraphql } from "../RoomGraphql";
 
 @ObjectType()
-export class AuthorGeneralResponse {
-  @Field(() => AuthorGraphql, { nullable: true })
-  author?: AuthorGraphql;
+export class RoomGeneralResponse {
+  @Field(() => RoomGraphql, { nullable: true })
+  room?: RoomGraphql;
 
   @Field(() => FieldError, { nullable: true })
   error?: FieldError;
 }
-

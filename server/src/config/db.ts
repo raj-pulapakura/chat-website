@@ -1,7 +1,9 @@
 import { ConnectionOptions } from "typeorm";
 import { env } from "../constants";
-import { BookEntity } from "../features/Book/BookEntity";
-import { AuthorEntity } from "../features/Author/AuthorEntity";
+import { AccountEntity } from "../features/Account/AccountEntity";
+import { RoomEntity } from "../features/Room/RoomEntity";
+import { ChatEntity } from "../features/Chat/ChatEntity";
+import { AccountRoomEntity } from "../features/AccountRoom/AccountRoomEntity";
 
 export const dbConfig: ConnectionOptions = {
   username: env.DB_USERNAME,
@@ -11,5 +13,5 @@ export const dbConfig: ConnectionOptions = {
   port: env.DB_PORT,
   type: "mysql",
   synchronize: true,
-  entities: [BookEntity, AuthorEntity]
+  entities: [AccountEntity, RoomEntity, ChatEntity, AccountRoomEntity],
 };

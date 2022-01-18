@@ -1,11 +1,10 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-export class CreateAuthorInput {
+export class RegisterInput {
   @Field(() => String)
-  firstName!: string;
+  username!: string;
 
   @Field(() => String)
-  lastName!: string;
+  password!: string;
 }
-

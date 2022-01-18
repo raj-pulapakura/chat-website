@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Session, SessionData } from "express-session";
 
 export type EnvironmentVariables = {
   DB_USERNAME: string;
@@ -10,6 +11,9 @@ export type EnvironmentVariables = {
 } & NodeJS.ProcessEnv;
 
 export interface Context {
-  req: Request;
+  req: Request & {
+    session: Session &
+      Partial<SessionData> & { accountId: string; adminLoggedIn: boolean };
+  };
   res: Response;
 }
