@@ -1,10 +1,14 @@
-# chathub.ninja
+Usually for chat apps you would something like sockets for preserved connections, but I simply decided to use the react-query package to automatically refetch data on the client, so it wasn't that big of a deal.
 
-chathub.ninja is a website where you can create rooms and chat with your friends.
+## Features:
 
-1. Create a room
-2. Send a friend the ID of the room
-3. Your friend will then join your room
-4. Let the chatting begin!
+ - Create rooms
+ - Invite friends
+ - Chat together
 
-(website it currently down, please notify me if you would like to see it up)
+To join a room that someone else has created, the creator has to invite you, or you can join by yourself if you know the room ID.
+
+## Tech stack:
+
+ - Website: React | react-query (data-fetcher) | material-ui (component library)
+ - Backend: NodeJS | Graphql | MySQL | Redis (session store) | Docker
