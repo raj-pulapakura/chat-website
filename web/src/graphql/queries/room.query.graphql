@@ -1,0 +1,20 @@
+query Room($roomId: ID!) {
+  room(roomId: $roomId) {
+    room {
+      id
+      createdAt
+      title
+      updatedAt
+      creatorId
+      chats {
+        id
+        createdAt
+        updatedAt
+        text
+        senderId
+        roomId
+      }
+      description
+    }
+  }
+}

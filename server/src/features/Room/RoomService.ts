@@ -1,9 +1,11 @@
 import { AccountEntity } from "../Account/AccountEntity";
+import { AccountError } from "../Account/AccountError";
 import { AccountRoomEntity } from "../AccountRoom/AccountRoomEntity";
 import { ChatService } from "../Chat/ChatService";
 import { RoomGeneralResponse } from "./objects/RoomGeneralResponse";
 import { RoomsGeneralResponse } from "./objects/RoomsGeneralResponse";
 import { RoomEntity } from "./RoomEntity";
+import { RoomError } from "./RoomError";
 import { RoomGraphql } from "./RoomGraphql";
 
 export class RoomService {
@@ -11,8 +13,8 @@ export class RoomService {
     const room = await RoomEntity.findOne(roomId);
     const roomDoesNotExistError: RoomGeneralResponse["error"] = {
       field: "id",
-      message: "a room with that id does not exist",
-      ufm: "A room with that id does not exist",
+      message: RoomError.roomWithThatIdDoesNotExist.message,
+      ufm: RoomError.roomWithThatIdDoesNotExist.ufm,
     };
 
     if (!room) {
@@ -55,8 +57,8 @@ export class RoomService {
       return {
         error: {
           field: "accountId",
-          message: "an account with that id does not exist",
-          ufm: "An account with that id does not exist",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
         },
       };
     }
@@ -82,9 +84,8 @@ export class RoomService {
       return {
         error: {
           field: "title",
-          message:
-            "the user with that id has already created a room with that title",
-          ufm: "You have already created a room with that title. Please choose a different one",
+          message: RoomError.userHasAlreadyCreatedRoomWithSameTitle.message,
+          ufm: RoomError.userHasAlreadyCreatedRoomWithSameTitle.ufm,
         },
       };
     }

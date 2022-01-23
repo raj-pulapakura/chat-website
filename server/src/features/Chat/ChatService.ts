@@ -1,5 +1,7 @@
 import { AccountEntity } from "../Account/AccountEntity";
+import { AccountError } from "../Account/AccountError";
 import { RoomEntity } from "../Room/RoomEntity";
+import { RoomError } from "../Room/RoomError";
 import { ChatEntity } from "./ChatEntity";
 import { ChatGeneralResponse } from "./objects/ChatGeneralResponse";
 import { ChatsGeneralResponse } from "./objects/ChatsGeneralResponse";
@@ -10,9 +12,31 @@ export class ChatService {
     senderId: string,
     roomId: string
   ): Promise<ChatGeneralResponse> {
-    console.log({ text, senderId, roomId });
+    const sender = await AccountEntity.findOne(senderId);
+
+    if (!sender) {
+      return {
+        error: {
+          field: "senderId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
+      };
+    }
+
+    const room = await RoomEntity.findOne(roomId);
+
+    if (!room) {
+      return {
+        error: {
+          field: "roomId",
+          message: RoomError.roomWithThatIdDoesNotExist.message,
+          ufm: RoomError.roomWithThatIdDoesNotExist.ufm,
+        },
+      };
+    }
+
     const newChat = await ChatEntity.create({ text, senderId, roomId }).save();
-    console.log({ newChat });
     return {
       chat: newChat,
     };
@@ -24,8 +48,8 @@ export class ChatService {
       return {
         error: {
           field: "roomId",
-          message: "a room with that id does not exist",
-          ufm: "A room with that id does not exist",
+          message: RoomError.roomWithThatIdDoesNotExist.message,
+          ufm: RoomError.roomWithThatIdDoesNotExist.ufm,
         },
       };
     }
@@ -45,8 +69,8 @@ export class ChatService {
       return {
         error: {
           field: "accountId",
-          message: "an account with that id does not exist",
-          ufm: "An account with that id does not exist",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
         },
       };
     }

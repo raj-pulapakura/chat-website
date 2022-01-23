@@ -3,6 +3,7 @@ import { BaseModel } from "../../objects/BaseModel";
 import { AccountEntity } from "../Account/AccountEntity";
 import { AccountRoomEntity } from "../AccountRoom/AccountRoomEntity";
 import { ChatEntity } from "../Chat/ChatEntity";
+import { InviteRequestEntity } from "../InviteRequest/InviteRequestEntity";
 
 @Entity("room")
 export class RoomEntity extends BaseModel {
@@ -27,6 +28,13 @@ export class RoomEntity extends BaseModel {
   roomJoinedToAccounts!: AccountRoomEntity[];
 
   // a single room can have multiple chats
-  @OneToMany(() => ChatEntity, chat => chat.chatRoomConnection)
+  @OneToMany(() => ChatEntity, (chat) => chat.chatRoomConnection)
   chatRoomConnection!: ChatEntity[];
+
+  // a single room can be requested in multiple invites
+  @OneToMany(
+    () => InviteRequestEntity,
+    (inviteRequest) => inviteRequest.inviteRequestRoomConnection
+  )
+  inviteRequestRoomConnection!: InviteRequestEntity[];
 }

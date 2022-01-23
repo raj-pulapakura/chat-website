@@ -2,6 +2,7 @@ import { Entity, Column, OneToMany } from "typeorm";
 import { BaseModel } from "../../objects/BaseModel";
 import { AccountRoomEntity } from "../AccountRoom/AccountRoomEntity";
 import { ChatEntity } from "../Chat/ChatEntity";
+import { InviteRequestEntity } from "../InviteRequest/InviteRequestEntity";
 import { RoomEntity } from "../Room/RoomEntity";
 
 @Entity("account")
@@ -26,4 +27,15 @@ export class AccountEntity extends BaseModel {
   // a single account can create multiple chats
   @OneToMany(() => ChatEntity, (chat) => chat.chatSenderConnection)
   chatSenderConnection!: ChatEntity[];
+
+  // a single account can be the sender multiple invite requests
+  @OneToMany(
+    () => InviteRequestEntity,
+    (inviteRequest) => inviteRequest.inviteRequestSenderConnection
+  )
+  inviteRequestSenderConnection!: InviteRequestEntity[];
+
+  // a single account can be the recepient of multiple invite requests
+  @OneToMany(() => InviteRequestEntity, (inviteRequest) => inviteRequest)
+  inviteRequestRecepientConnection!: InviteRequestEntity[];
 }

@@ -1,61 +1,42 @@
-import { Context } from "../../types";
 import { AccountEntity } from "../Account/AccountEntity";
-import { AccountService } from "../Account/AccountService";
+import { AccountError } from "../Account/AccountError";
 import { RoomEntity } from "../Room/RoomEntity";
-import { RoomService } from "../Room/RoomService";
+import { RoomError } from "../Room/RoomError";
 import { AccountRoomEntity } from "./AccountRoomEntity";
+import { AccountRoomError } from "./AccountRoomError";
 import { JoinAccountToRoomResponse } from "./objects/JoinAccountToRoomResponse";
 
 export class AccountRoomService {
-  static async joinCurrentUserToRoom(
-    context: Context,
+  static async joinAccountToRoom(
+    accountId: string,
     roomId: string,
     isCreator: boolean
   ): Promise<JoinAccountToRoomResponse> {
+    const account = await AccountEntity.findOne(accountId);
+
+    if (!account) {
+      return {
+        error: {
+          field: "accountId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
+        successfullyJoined: false,
+      };
+    }
+
     const room = await RoomEntity.findOne(roomId);
 
     if (!room) {
       return {
         error: {
           field: "roomId",
-          message: "a room with that id does not exist",
-          ufm: "A room with that id does not exist",
+          message: RoomError.roomWithThatIdDoesNotExist.message,
+          ufm: RoomError.roomWithThatIdDoesNotExist.ufm,
         },
         successfullyJoined: false,
       };
     }
-
-    const { userIsLoggedIn, account } = await AccountService.fetchCurrentUser(
-      context
-    );
-
-    if (!userIsLoggedIn || !account) {
-      return {
-        error: {
-          field: "accountId",
-          message: "not logged in",
-          ufm: "You are not logged in",
-        },
-        successfullyJoined: false,
-      };
-    }
-
-    await AccountRoomEntity.create({
-      accountId: account.id,
-      roomId,
-      isCreator,
-    }).save();
-
-    return {
-      successfullyJoined: true,
-    };
-  }
-
-  static async joinAccountToRoom(
-    accountId: string,
-    roomId: string,
-    isCreator: boolean
-  ): Promise<JoinAccountToRoomResponse> {
     const accountRoom = await AccountRoomEntity.findOne({
       where: { accountId, roomId },
     });
@@ -66,8 +47,8 @@ export class AccountRoomService {
           error: {
             field: "accountId",
             message:
-              "the account with that accountId is already joined to the room with that roomId",
-            ufm: "You are already joined to this room, in fact, you created it!",
+              AccountRoomError.accountAlreadyJoinedToRoomAndIsCreator.message,
+            ufm: AccountRoomError.accountAlreadyJoinedToRoomAndIsCreator.ufm,
           },
           successfullyJoined: false,
         };
@@ -75,39 +56,12 @@ export class AccountRoomService {
         return {
           error: {
             field: "accountId",
-            message:
-              "the account with that accountId is already joined to the room with that roomId",
-            ufm: "You are already joined to this room",
+            message: AccountRoomError.accountAlreadyJoinedToRoom.message,
+            ufm: AccountRoomError.accountAlreadyJoinedToRoom.ufm,
           },
           successfullyJoined: false,
         };
       }
-    }
-
-    const account = await AccountEntity.findOne(accountId);
-
-    if (!account) {
-      return {
-        error: {
-          field: "accountId",
-          message: "an account with that id does not exist",
-          ufm: "An account with that id does not exist",
-        },
-        successfullyJoined: false,
-      };
-    }
-
-    const room = await RoomEntity.findOne(roomId);
-
-    if (!room) {
-      return {
-        error: {
-          field: "roomId",
-          message: "a room with that id does not exist",
-          ufm: "A room with that id does not exist",
-        },
-        successfullyJoined: false,
-      };
     }
 
     await AccountRoomEntity.create({

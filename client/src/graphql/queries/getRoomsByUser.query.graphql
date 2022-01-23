@@ -1,7 +1,0 @@
-query RoomsByUser($userId: ID!) {
-  roomsByUser(userId: $userId) {
-    id
-    name
-    publicId
-  }
-}

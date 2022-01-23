@@ -9,9 +9,8 @@ services:
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: main
-  redis:
-    image: redis
-    command: "redis-server --requirepass secret"
+    volumes:
+      - dbVol:/var/lib/mysql
   server:
    build: ./server
    ports: 
@@ -27,4 +26,6 @@ services:
     DB_HOST: db
     DB_PORT: 3306
     DB_DATABASE: main
-  
+volumes:
+  dbVol:
+  redisVol:

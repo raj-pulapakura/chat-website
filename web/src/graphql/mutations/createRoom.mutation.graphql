@@ -1,0 +1,25 @@
+mutation CreateRoom($input: CreateRoomInput!) {
+  createRoom(input: $input) {
+    room {
+      id
+      createdAt
+      title
+      updatedAt
+      description
+      creatorId
+      chats {
+        id
+        createdAt
+        updatedAt
+        text
+        senderId
+        roomId
+      }
+    }
+    error {
+      ufm
+      message
+      field
+    }
+  }
+}

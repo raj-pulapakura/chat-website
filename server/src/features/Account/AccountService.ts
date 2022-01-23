@@ -5,40 +5,106 @@ import { hash, genSalt, compare } from "bcrypt";
 import { Context } from "../../types";
 import { RoomService } from "../Room/RoomService";
 import { ChatService } from "../Chat/ChatService";
-import { CurrentUserResponse } from "./objects/CurrentUserResponse";
+import jwt from "jsonwebtoken";
+import { AUTH_COOKIE, SECRET, TEN_YEARS } from "../../constants";
+import { AccountError } from "./AccountError";
+import { InviteRequestService } from "../InviteRequest/InviteRequestService";
 
 export class AccountService {
-  static async fetchCurrentUser(
-    context: Context
-  ): Promise<CurrentUserResponse> {
-    const { accountId } = context.req.session;
-    const account = await AccountEntity.findOne(accountId);
+  static async convertAccountEntityToAccountGraphql(
+    accountId: string
+  ): Promise<AccountGeneralResponse> {
+    const account = await AccountEntity.findOne();
+
     if (!account) {
       return {
-        userIsLoggedIn: false,
+        error: {
+          field: "accountId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
       };
     }
 
-    const accountChats = await ChatService.fetchChatsByAccount(account.id);
-    const accountRooms = await RoomService.fetchRoomsByAccount(account.id);
+    const accountChats = await ChatService.fetchChatsByAccount(accountId);
+    const accountRooms = await RoomService.fetchRoomsByAccount(accountId);
+    const accountInviteRequestSent =
+      await InviteRequestService.fetchInviteRequestBySender(accountId);
+    const accountInviteRequestReceived =
+      await InviteRequestService.fetchInviteRequestsByRecepient(accountId);
 
     return {
-      userIsLoggedIn: true,
       account: {
         ...account,
         chats: accountChats.chats || [],
         rooms: accountRooms.rooms || [],
+        inviteRequestsSent: accountInviteRequestSent.inviteRequests || [],
+        inviteRequestReceived:
+          accountInviteRequestReceived.inviteRequests || [],
       },
     };
   }
 
-  static checkAccountAndExposeAuthCookie(
-    context: Context,
-    accountResponse: AccountGeneralResponse
-  ): void {
-    if (!accountResponse.error && accountResponse.account) {
-      context.req.session.accountId = accountResponse.account.id;
+  static logout(context: Context): void {
+    if (context.req.cookies[AUTH_COOKIE]) {
+      context.res.clearCookie(AUTH_COOKIE);
     }
+  }
+
+  static async fetchCurrentUser(
+    context: Context
+  ): Promise<AccountGeneralResponse> {
+    const token = context.req.cookies[AUTH_COOKIE];
+    if (!token) {
+      return {
+        error: {
+          field: "accountId",
+          message: AccountError.userIsNotLoggedIn.message,
+          ufm: AccountError.userIsNotLoggedIn.ufm,
+        },
+      };
+    }
+
+    const { accountId } = jwt.verify(token, SECRET) as {
+      accountId: string;
+      iat: number;
+    };
+
+    const account = await AccountEntity.findOne(accountId);
+
+    if (!account) {
+      return {
+        error: {
+          field: "accountId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
+      };
+    }
+
+    const accountData = await this.convertAccountEntityToAccountGraphql(
+      accountId
+    );
+
+    if (accountData.error) {
+      return {
+        error: accountData.error,
+      };
+    }
+
+    return {
+      account: accountData.account,
+    };
+  }
+
+  static exposeAuthCookie(context: Context, accountId: string): void {
+    const token = jwt.sign({ accountId }, SECRET);
+    context.res.cookie(AUTH_COOKIE, token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: TEN_YEARS,
+    });
   }
 
   static async verifyLoginCredentials(
@@ -50,8 +116,8 @@ export class AccountService {
       return {
         error: {
           field: "username",
-          message: "an account with that username does not exist",
-          ufm: "Invalid credentials",
+          message: AccountError.invalidLoginCredentials.message,
+          ufm: AccountError.invalidLoginCredentials.ufm,
         },
       };
     }
@@ -62,21 +128,24 @@ export class AccountService {
       return {
         error: {
           field: "password",
-          message: "incorrect password for given username",
-          ufm: "Invalid credentials",
+          message: AccountError.invalidLoginCredentials.message,
+          ufm: AccountError.invalidLoginCredentials.ufm,
         },
       };
     }
 
-    const accountChats = await ChatService.fetchChatsByAccount(account.id);
-    const accountRooms = await RoomService.fetchRoomsByAccount(account.id);
+    const accountData = await this.convertAccountEntityToAccountGraphql(
+      account.id
+    );
+
+    if (accountData.error) {
+      return {
+        error: accountData.error,
+      };
+    }
 
     return {
-      account: {
-        ...account,
-        chats: accountChats.chats || [],
-        rooms: accountRooms.rooms || [],
-      },
+      account: accountData.account,
     };
   }
 
@@ -100,8 +169,8 @@ export class AccountService {
       return {
         error: {
           field: "username",
-          message: "a user with that username already exists",
-          ufm: "A user with that username already exists. Please choose a different one",
+          message: AccountError.userWithThatUsernameAlreadyExists.message,
+          ufm: AccountError.userWithThatUsernameAlreadyExists.ufm,
         },
       };
     }
@@ -110,8 +179,8 @@ export class AccountService {
       return {
         error: {
           field: "password",
-          message: "password must have at least six characters",
-          ufm: "Please enter a password with at least six characters",
+          message: AccountError.passwordMustBeAtLeastSixChars.message,
+          ufm: AccountError.passwordMustBeAtLeastSixChars.ufm,
         },
       };
     }
@@ -128,6 +197,8 @@ export class AccountService {
         ...createdAccount,
         rooms: [],
         chats: [],
+        inviteRequestReceived: [],
+        inviteRequestsSent: [],
       },
     };
   }
@@ -152,8 +223,8 @@ export class AccountService {
     const account = await AccountEntity.findOne(accountId);
     const accountDoesNotExistError: AccountGeneralResponse["error"] = {
       field: "accountId",
-      message: "an account with that id does not exist",
-      ufm: "An account with that id does not exist",
+      message: AccountError.accountWithThatIdDoesNotExist.message,
+      ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
     };
 
     if (!account) {
@@ -161,21 +232,19 @@ export class AccountService {
         error: accountDoesNotExistError,
       };
     }
-    const { id, username, password, createdAt, updatedAt } = account;
 
-    const accountChats = await ChatService.fetchChatsByAccount(id);
-    const accountRooms = await RoomService.fetchRoomsByAccount(id);
+    const accountData = await this.convertAccountEntityToAccountGraphql(
+      accountId
+    );
+
+    if (accountData.error) {
+      return {
+        error: accountData.error,
+      };
+    }
 
     return {
-      account: {
-        id,
-        username,
-        password,
-        createdAt,
-        updatedAt,
-        rooms: accountRooms.rooms || [],
-        chats: accountChats.chats || [],
-      },
+      account: accountData.account,
     };
   }
 }

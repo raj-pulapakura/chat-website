@@ -32,7 +32,12 @@ export class AccountResolver {
       input.username,
       input.password
     );
-    AccountService.checkAccountAndExposeAuthCookie(context, accountResponse);
+    if (!accountResponse.error && accountResponse.account) {
+      await AccountService.exposeAuthCookie(
+        context,
+        accountResponse.account.id
+      );
+    }
     return accountResponse;
   }
 
@@ -45,7 +50,9 @@ export class AccountResolver {
       input.username,
       input.password
     );
-    AccountService.checkAccountAndExposeAuthCookie(context, accountResponse);
+    if (!accountResponse.error && accountResponse.account) {
+      AccountService.exposeAuthCookie(context, accountResponse.account.id);
+    }
     return accountResponse;
   }
 
@@ -58,14 +65,20 @@ export class AccountResolver {
 
   @Mutation(() => JoinAccountToRoomResponse)
   async joinRoom(
-    @Arg("roomId", () => ID) roomId: string,
-    @Ctx() context: Context
+    @Arg("accountId", () => ID) accountId: string,
+    @Arg("roomId", () => ID) roomId: string
   ): Promise<JoinAccountToRoomResponse> {
-    return AccountRoomService.joinCurrentUserToRoom(context, roomId, false);
+    return AccountRoomService.joinAccountToRoom(accountId, roomId, false);
   }
 
-  @Query(() => CurrentUserResponse)
-  me(@Ctx() context: Context): Promise<CurrentUserResponse> {
+  @Query(() => AccountGeneralResponse)
+  me(@Ctx() context: Context): Promise<AccountGeneralResponse> {
     return AccountService.fetchCurrentUser(context);
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() context: Context): Boolean {
+    AccountService.logout(context);
+    return true;
   }
 }

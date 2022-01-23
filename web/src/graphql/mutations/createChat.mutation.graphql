@@ -1,0 +1,17 @@
+mutation CreateChat($input: CreateChatInput!) {
+  createChat(input: $input) {
+    chat {
+      id
+      createdAt
+      updatedAt
+      text
+      senderId
+      roomId
+    }
+    error {
+      field
+      message
+      ufm
+    }
+  }
+}

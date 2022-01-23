@@ -1,9 +1,0 @@
-query GetRoomById($id: ID!) {
-  roomById(id: $id) {
-    id
-    name
-    description
-    createdAt
-    publicId
-  }
-}
