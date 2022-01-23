@@ -8,7 +8,8 @@ export class InviteRequestEntity extends BaseModel {
   // an invite request can only have one recepient
   @ManyToOne(
     () => AccountEntity,
-    (account) => account.inviteRequestRecepientConnection
+    (account) => account.inviteRequestRecepientConnection,
+    { onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "recepientId" })
   inviteRequestRecepientConnection!: AccountEntity;
@@ -19,7 +20,8 @@ export class InviteRequestEntity extends BaseModel {
   // an invite request can only be created by a single account
   @ManyToOne(
     () => AccountEntity,
-    (account) => account.inviteRequestSenderConnection
+    (account) => account.inviteRequestSenderConnection,
+    { onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "senderId" })
   inviteRequestSenderConnection!: AccountEntity;
@@ -28,7 +30,7 @@ export class InviteRequestEntity extends BaseModel {
   senderId!: string;
 
   // an invite request can only belong to a single room
-  @ManyToOne(() => RoomEntity, (room) => room)
+  @ManyToOne(() => RoomEntity, (room) => room, { onDelete: "CASCADE" })
   @JoinColumn({ name: "roomId" })
   inviteRequestRoomConnection!: RoomEntity;
 

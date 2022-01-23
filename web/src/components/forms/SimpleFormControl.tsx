@@ -36,7 +36,11 @@ export const SimpleFormControl: React.FC<SimpleFormControlProps> = ({
       />
       <Spacing height="0.5rem" />
       <Box>
-        <Typography color={appTheme.palette.error.light} variant="subtitle1">
+        <Typography
+          textAlign="left"
+          color={appTheme.palette.error.light}
+          variant="subtitle1"
+        >
           {error}
         </Typography>
       </Box>

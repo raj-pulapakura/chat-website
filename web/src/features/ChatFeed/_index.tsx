@@ -6,12 +6,16 @@ import { useRoomQuery } from "../../graphql/generated";
 import { StoreState } from "../../store";
 import { ChatFeedBox } from "./ChatFeedBox";
 
-type ChatFeedProps = {
-  roomId: string;
-} & BoxProps;
+type ChatFeedProps = {} & BoxProps;
 
-export const ChatFeed: React.FC<ChatFeedProps> = ({ roomId, ...props }) => {
-  const { data: roomData } = useRoomQuery(graphqlClient, { roomId });
+export const ChatFeed: React.FC<ChatFeedProps> = ({ ...props }) => {
+  const currentRoomId = useSelector<StoreState>(
+    (state) => state.room.currentRoomId
+  ) as StoreState["room"]["currentRoomId"];
+
+  const { data: roomData } = useRoomQuery(graphqlClient, {
+    roomId: currentRoomId,
+  });
 
   const chatFeedRef = React.useRef<HTMLDivElement>(null);
 
@@ -22,7 +26,7 @@ export const ChatFeed: React.FC<ChatFeedProps> = ({ roomId, ...props }) => {
   return (
     <Box {...props}>
       {roomData?.room?.room?.chats.map((chat) => (
-        <ChatFeedBox chat={chat} />
+        <ChatFeedBox key={chat.id} chat={chat} />
       ))}
     </Box>
   );

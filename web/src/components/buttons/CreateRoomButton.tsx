@@ -7,9 +7,9 @@ import { FormTitle } from "../forms/FormTitle";
 import { SimpleFormControl } from "../forms/SimpleFormControl";
 import { Modal } from "../Modal";
 
-type CreateRoomActivatorProps = {} & ButtonProps;
+type CreateRoomButtonProps = {} & ButtonProps;
 
-export const CreateRoomActivator: React.FC<CreateRoomActivatorProps> = ({
+export const CreateRoomButton: React.FC<CreateRoomButtonProps> = ({
   children,
   ...props
 }) => {

@@ -7,8 +7,8 @@ import { DeadCenter } from "../../components/DeadCenter";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../features/AppRouter/_index";
 import { PrimeWrapper } from "../../components/PrimeWrapper";
-import { MeButton } from "../../components/MeButton";
-import { LogoutButton } from "../../components/LogoutButton";
+import { MeButton } from "../../components/buttons/MeButton";
+import { LogoutButton } from "../../components/buttons/LogoutButton";
 
 const useStyles = makeStyles({
   stepSection: {

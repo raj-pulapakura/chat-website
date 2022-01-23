@@ -1,5 +1,5 @@
-mutation Login($input: LoginInput!) {
-  login(input: $input) {
+query AccountById($accountId: ID!) {
+  accountById(accountId: $accountId) {
     account {
       id
       createdAt

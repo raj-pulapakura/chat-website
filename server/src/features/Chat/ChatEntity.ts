@@ -11,12 +11,16 @@ export class ChatEntity extends BaseModel {
   // multiple chats can be created by a single account
   @Column({ type: "varchar" })
   senderId!: string;
-  @ManyToOne(() => AccountEntity, (account) => account.chatSenderConnection)
+  @ManyToOne(() => AccountEntity, (account) => account.chatSenderConnection, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "senderId" })
   chatSenderConnection!: AccountEntity;
 
   // mutiple chats can belong to a single room
-  @ManyToOne(() => RoomEntity, (room) => room.chatRoomConnection)
+  @ManyToOne(() => RoomEntity, (room) => room.chatRoomConnection, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "roomId" })
   chatRoomConnection!: RoomEntity;
   @Column({ type: "varchar" })

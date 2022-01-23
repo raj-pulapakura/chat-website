@@ -5,16 +5,16 @@ import { hash, genSalt, compare } from "bcrypt";
 import { Context } from "../../types";
 import { RoomService } from "../Room/RoomService";
 import { ChatService } from "../Chat/ChatService";
-import jwt from "jsonwebtoken";
 import { AUTH_COOKIE, SECRET, TEN_YEARS } from "../../constants";
 import { AccountError } from "./AccountError";
 import { InviteRequestService } from "../InviteRequest/InviteRequestService";
+import jwt from "jsonwebtoken";
 
 export class AccountService {
   static async convertAccountEntityToAccountGraphql(
     accountId: string
   ): Promise<AccountGeneralResponse> {
-    const account = await AccountEntity.findOne();
+    const account = await AccountEntity.findOne(accountId);
 
     if (!account) {
       return {
@@ -39,7 +39,7 @@ export class AccountService {
         chats: accountChats.chats || [],
         rooms: accountRooms.rooms || [],
         inviteRequestsSent: accountInviteRequestSent.inviteRequests || [],
-        inviteRequestReceived:
+        inviteRequestsReceived:
           accountInviteRequestReceived.inviteRequests || [],
       },
     };
@@ -197,7 +197,7 @@ export class AccountService {
         ...createdAccount,
         rooms: [],
         chats: [],
-        inviteRequestReceived: [],
+        inviteRequestsReceived: [],
         inviteRequestsSent: [],
       },
     };
@@ -209,7 +209,7 @@ export class AccountService {
     );
     const accounts: AccountGraphql[] = [];
     for (const id of accountIds) {
-      const fetchedAccount = await this.fetchAccount(id);
+      const fetchedAccount = await this.fetchAccountById(id);
       if (!fetchedAccount.error && fetchedAccount.account) {
         accounts.push(fetchedAccount.account);
       }
@@ -217,19 +217,53 @@ export class AccountService {
     return accounts;
   }
 
-  static async fetchAccount(
-    accountId: string
+  static async fetchAccountByUsername(
+    username: string
   ): Promise<AccountGeneralResponse> {
-    const account = await AccountEntity.findOne(accountId);
-    const accountDoesNotExistError: AccountGeneralResponse["error"] = {
-      field: "accountId",
-      message: AccountError.accountWithThatIdDoesNotExist.message,
-      ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
-    };
+    const account = await AccountEntity.findOne({ where: { username } });
+
+    console.log({ account });
 
     if (!account) {
       return {
-        error: accountDoesNotExistError,
+        error: {
+          field: "accountId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
+      };
+    }
+
+    console.log({ id: account.id });
+
+    const accountData = await this.convertAccountEntityToAccountGraphql(
+      account.id
+    );
+
+    console.log({ accountData });
+
+    if (accountData.error) {
+      return {
+        error: accountData.error,
+      };
+    }
+
+    return {
+      account: accountData.account,
+    };
+  }
+
+  static async fetchAccountById(
+    accountId: string
+  ): Promise<AccountGeneralResponse> {
+    const account = await AccountEntity.findOne(accountId);
+    if (!account) {
+      return {
+        error: {
+          field: "accountId",
+          message: AccountError.accountWithThatIdDoesNotExist.message,
+          ufm: AccountError.accountWithThatIdDoesNotExist.ufm,
+        },
       };
     }
 

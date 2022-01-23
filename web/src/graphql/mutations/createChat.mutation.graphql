@@ -9,9 +9,7 @@ mutation CreateChat($input: CreateChatInput!) {
       roomId
     }
     error {
-      field
-      message
-      ufm
+      ...FieldErrorFragment
     }
   }
 }

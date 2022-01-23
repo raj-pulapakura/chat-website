@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer, StoreState } from "./reducer";
 import { designSlice } from "./features/design";
+import { roomSlice } from "./features/room";
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -8,4 +9,4 @@ export const store = configureStore({
 });
 
 export type { StoreState };
-export { designSlice };
+export { designSlice, roomSlice };

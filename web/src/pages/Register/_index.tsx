@@ -62,6 +62,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({}) => {
         <SimpleFormControl
           value={formState.password}
           error={formErrors.password}
+          type="password"
           label="Password"
           onChange={(e) =>
             setFormState({ ...formState, password: e.target.value })

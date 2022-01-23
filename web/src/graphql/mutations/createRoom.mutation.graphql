@@ -17,9 +17,7 @@ mutation CreateRoom($input: CreateRoomInput!) {
       }
     }
     error {
-      ufm
-      message
-      field
+      ...FieldErrorFragment
     }
   }
 }

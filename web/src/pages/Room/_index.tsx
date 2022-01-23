@@ -1,26 +1,34 @@
 import { Reply } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
-import React from "react";
+import { Box, Typography } from "@mui/material";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { InviteUserActivator } from "../../components/activators/InviteUserActivator";
+import { InviteUserButton } from "../../components/buttons/InviteUserButton";
 import { PrimeWrapper } from "../../components/PrimeWrapper";
 import { Spacing } from "../../components/Spacing";
 import { ChatFeed } from "../../features/ChatFeed/_index";
 import { ChatSender } from "../../features/ChatSender/_index";
 import { graphqlClient } from "../../graphql/client";
 import { useRoomQuery } from "../../graphql/generated";
-import { appTheme, colors } from "../../theme";
+import { appTheme } from "../../theme";
+import { useDispatch } from "react-redux";
+import { roomSlice } from "../../store";
 
 interface RoomPageProps {}
 
 export const RoomPage: React.FC<RoomPageProps> = ({}) => {
-  const { id } = useParams() as { id: string };
+  const { id: roomId } = useParams() as { id: string };
 
   const { data: roomData } = useRoomQuery(
     graphqlClient,
-    { roomId: id },
+    { roomId },
     { refetchInterval: 1000 }
   );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(roomSlice.actions.setCurrentRoomId(roomId));
+  }, [roomId]);
 
   const noChats = !roomData?.room.room?.chats.length;
 
@@ -37,9 +45,9 @@ export const RoomPage: React.FC<RoomPageProps> = ({}) => {
           {roomData?.room?.room?.title}
         </Typography>
         <Spacing height="1rem" />
-        <InviteUserActivator startIcon={<Reply />}>
+        <InviteUserButton startIcon={<Reply />}>
           Send Invite Request
-        </InviteUserActivator>
+        </InviteUserButton>
       </PrimeWrapper>
       {noChats ? (
         <>
@@ -54,10 +62,10 @@ export const RoomPage: React.FC<RoomPageProps> = ({}) => {
       ) : (
         <>
           <Spacing height="1rem" />
-          <ChatFeed sx={{ marginBottom: "4rem" }} roomId={id} />
+          <ChatFeed sx={{ marginBottom: "4rem" }} />
         </>
       )}
-      <ChatSender roomId={id} />
+      <ChatSender />
     </Box>
   );
 };

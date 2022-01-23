@@ -1,9 +1,8 @@
-import { Paper, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
-import { PrimeWrapper } from "../../components/PrimeWrapper";
 import { Spacing } from "../../components/Spacing";
 import { graphqlClient } from "../../graphql/client";
-import { MeQuery, useMeQuery } from "../../graphql/generated";
+import { useMeQuery } from "../../graphql/generated";
 import { RoomListItem } from "./RoomListItem";
 
 interface RoomsListProps {}
@@ -14,10 +13,10 @@ export const RoomsList: React.FC<RoomsListProps> = ({}) => {
   return (
     <>
       {meData?.me.account?.rooms.map((room) => (
-        <>
+        <Box key={room.id}>
           <RoomListItem room={room} />
           <Spacing height="1rem" />
-        </>
+        </Box>
       ))}
     </>
   );

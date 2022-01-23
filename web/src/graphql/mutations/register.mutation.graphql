@@ -24,9 +24,7 @@ mutation Register($input: RegisterInput!) {
       }
     }
     error {
-      field
-      ufm
-      message
+      ...FieldErrorFragment
     }
   }
 }

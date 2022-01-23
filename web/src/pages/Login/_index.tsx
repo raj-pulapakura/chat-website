@@ -59,6 +59,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({}) => {
         <SimpleFormControl
           value={formState.password}
           error={formErrors.password}
+          type="password"
           label="Password"
           onChange={(e) =>
             setFormState({ ...formState, password: e.target.value })

@@ -16,25 +16,31 @@ export class RoomEntity extends BaseModel {
   // multiple rooms can be created by a single account
   @Column({ type: "varchar" })
   creatorId!: string;
-  @ManyToOne(() => AccountEntity, (account) => account.roomCreatorConnection)
+  @ManyToOne(() => AccountEntity, (account) => account.roomCreatorConnection, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "creatorId" })
   roomCreatorConnection!: AccountEntity;
 
   // a single room can by joined to by multiple accounts
   @OneToMany(
     () => AccountRoomEntity,
-    (accountRoomConn) => accountRoomConn.roomsConnection
+    (accountRoomConn) => accountRoomConn.roomsConnection,
+    { onDelete: "CASCADE" }
   )
   roomJoinedToAccounts!: AccountRoomEntity[];
 
   // a single room can have multiple chats
-  @OneToMany(() => ChatEntity, (chat) => chat.chatRoomConnection)
+  @OneToMany(() => ChatEntity, (chat) => chat.chatRoomConnection, {
+    onDelete: "CASCADE",
+  })
   chatRoomConnection!: ChatEntity[];
 
   // a single room can be requested in multiple invites
   @OneToMany(
     () => InviteRequestEntity,
-    (inviteRequest) => inviteRequest.inviteRequestRoomConnection
+    (inviteRequest) => inviteRequest.inviteRequestRoomConnection,
+    { onDelete: "CASCADE" }
   )
   inviteRequestRoomConnection!: InviteRequestEntity[];
 }

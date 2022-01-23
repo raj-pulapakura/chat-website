@@ -14,28 +14,36 @@ export class AccountEntity extends BaseModel {
   password!: string;
 
   // a single account can create multiple rooms
-  @OneToMany(() => RoomEntity, (room) => room.roomCreatorConnection)
+  @OneToMany(() => RoomEntity, (room) => room.roomCreatorConnection, {
+    onDelete: "CASCADE",
+  })
   roomCreatorConnection!: RoomEntity[];
 
   // a single account can be joined to multiple rooms
   @OneToMany(
     () => AccountRoomEntity,
-    (accountRoomConn) => accountRoomConn.accountsConnection
+    (accountRoomConn) => accountRoomConn.accountsConnection,
+    { onDelete: "CASCADE" }
   )
   accountJoinedToRooms!: AccountRoomEntity;
 
   // a single account can create multiple chats
-  @OneToMany(() => ChatEntity, (chat) => chat.chatSenderConnection)
+  @OneToMany(() => ChatEntity, (chat) => chat.chatSenderConnection, {
+    onDelete: "CASCADE",
+  })
   chatSenderConnection!: ChatEntity[];
 
   // a single account can be the sender multiple invite requests
   @OneToMany(
     () => InviteRequestEntity,
-    (inviteRequest) => inviteRequest.inviteRequestSenderConnection
+    (inviteRequest) => inviteRequest.inviteRequestSenderConnection,
+    { onDelete: "CASCADE" }
   )
   inviteRequestSenderConnection!: InviteRequestEntity[];
 
   // a single account can be the recepient of multiple invite requests
-  @OneToMany(() => InviteRequestEntity, (inviteRequest) => inviteRequest)
+  @OneToMany(() => InviteRequestEntity, (inviteRequest) => inviteRequest, {
+    onDelete: "CASCADE",
+  })
   inviteRequestRecepientConnection!: InviteRequestEntity[];
 }

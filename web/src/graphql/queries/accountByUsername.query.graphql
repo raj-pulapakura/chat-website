@@ -1,5 +1,5 @@
-mutation Login($input: LoginInput!) {
-  login(input: $input) {
+query AccountByUsername($username: String!) {
+  accountByUsername(username: $username) {
     account {
       id
       createdAt

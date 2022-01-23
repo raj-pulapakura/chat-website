@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import React from "react";
-import { CreateRoomActivator } from "../../components/activators/CreateRoomActivator";
+import { CreateRoomButton } from "../../components/buttons/CreateRoomButton";
 import { PrimeWrapper } from "../../components/PrimeWrapper";
 import { Spacing } from "../../components/Spacing";
 import { RoomsList } from "../../features/RoomsList/_index";
@@ -21,7 +21,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({}) => {
     <>
       {userHasRooms ? (
         <>
-          <CreateRoomActivator>Create a Room</CreateRoomActivator>
+          <CreateRoomButton>Create a Room</CreateRoomButton>
           <Spacing height="1rem" />
           <RoomsList />
         </>
@@ -30,7 +30,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({}) => {
           <PrimeWrapper>
             <Typography>You do not have rooms</Typography>
             <Spacing height="1rem" />
-            <CreateRoomActivator>Create a Room</CreateRoomActivator>
+            <CreateRoomButton>Create a Room</CreateRoomButton>
           </PrimeWrapper>
         </>
       )}

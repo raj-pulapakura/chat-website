@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React from "react";
-import { graphqlClient } from "../graphql/client";
-import { useMeQuery } from "../graphql/generated";
+import { graphqlClient } from "../../graphql/client";
+import { useMeQuery } from "../../graphql/generated";
 
 interface MeButtonProps {}
 

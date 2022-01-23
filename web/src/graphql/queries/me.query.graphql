@@ -1,11 +1,14 @@
 query Me {
   me {
+    error {
+      ...FieldErrorFragment
+    }
     account {
       id
       createdAt
       updatedAt
-      username
       password
+      username
       rooms {
         id
         createdAt
@@ -22,11 +25,30 @@ query Me {
           roomId
         }
       }
-    }
-    error {
-      message
-      ufm
-      field
+      chats {
+        id
+        createdAt
+        updatedAt
+        text
+        senderId
+        roomId
+      }
+      inviteRequestsSent {
+        id
+        createdAt
+        updatedAt
+        senderId
+        recepientId
+        roomId
+      }
+      inviteRequestsReceived {
+        id
+        createdAt
+        updatedAt
+        senderId
+        recepientId
+        roomId
+      }
     }
   }
 }

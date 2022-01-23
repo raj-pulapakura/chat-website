@@ -1,11 +1,12 @@
-import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { IconButton, Paper, Typography } from "@mui/material";
 import React from "react";
 import { brandName } from "../../constants";
-import { fonts, colors } from "../../theme";
+import { colors } from "../../theme";
 import { Flex } from "../../components/Flex";
 import { Link } from "react-router-dom";
 import { routes } from "../AppRouter/_index";
-import { Menu, AccountCircle } from "@mui/icons-material";
+import { Menu, AccountCircle, Inbox } from "@mui/icons-material";
+import { InboxIconButton } from "../Inbox/InboxIconButton";
 
 interface NavigationBarProps {}
 
@@ -21,7 +22,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
     >
       <Flex
         sx={{
-          gap: "0.5rem",
           alignItems: "center",
           justifyContent: "space-between",
         }}
@@ -37,9 +37,12 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
             {brandName}
           </Typography>
         </Link>
-        <IconButton>
-          <AccountCircle color="secondary" />
-        </IconButton>
+        <Flex>
+          <InboxIconButton />
+          <IconButton>
+            <AccountCircle color="secondary" />
+          </IconButton>
+        </Flex>
       </Flex>
     </Paper>
   );

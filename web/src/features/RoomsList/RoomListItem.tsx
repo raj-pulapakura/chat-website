@@ -2,7 +2,6 @@ import { Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PrimeWrapper } from "../../components/PrimeWrapper";
-import { MeQuery } from "../../graphql/generated";
 
 interface RoomListItemProps {
   room: {

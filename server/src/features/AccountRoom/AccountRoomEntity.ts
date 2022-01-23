@@ -10,6 +10,7 @@ export class AccountRoomEntity extends BaseModel {
   accountId!: string;
   @ManyToOne(() => AccountEntity, (account) => account.accountJoinedToRooms, {
     primary: true,
+    onDelete: "CASCADE",
   })
   @JoinColumn({ name: "accountId" })
   accountsConnection!: AccountEntity;
@@ -19,6 +20,7 @@ export class AccountRoomEntity extends BaseModel {
   roomId!: string;
   @ManyToOne(() => RoomEntity, (room) => room.roomJoinedToAccounts, {
     primary: true,
+    onDelete: "CASCADE",
   })
   @JoinColumn({ name: "roomId" })
   roomsConnection!: RoomEntity;

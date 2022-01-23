@@ -7,15 +7,21 @@ import { AccountService } from "./AccountService";
 import { LoginInput } from "./inputs/LoginInput";
 import { RegisterInput } from "./inputs/RegisterInput";
 import { AccountGeneralResponse } from "./objects/AccountGeneralResponse";
-import { CurrentUserResponse } from "./objects/CurrentUserResponse";
 
 @Resolver()
 export class AccountResolver {
   @Query(() => AccountGeneralResponse)
-  account(
-    @Arg("accountId", () => String) accountId: string
+  accountById(
+    @Arg("accountId", () => ID) accountId: string
   ): Promise<AccountGeneralResponse> {
-    return AccountService.fetchAccount(accountId);
+    return AccountService.fetchAccountById(accountId);
+  }
+
+  @Query(() => AccountGeneralResponse)
+  accountByUsername(
+    @Arg("username", () => String) username: string
+  ): Promise<AccountGeneralResponse> {
+    return AccountService.fetchAccountByUsername(username);
   }
 
   @Query(() => [AccountGraphql])
@@ -33,10 +39,7 @@ export class AccountResolver {
       input.password
     );
     if (!accountResponse.error && accountResponse.account) {
-      await AccountService.exposeAuthCookie(
-        context,
-        accountResponse.account.id
-      );
+      AccountService.exposeAuthCookie(context, accountResponse.account.id);
     }
     return accountResponse;
   }

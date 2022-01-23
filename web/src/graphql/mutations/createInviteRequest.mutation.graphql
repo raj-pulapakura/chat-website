@@ -1,0 +1,23 @@
+mutation CreateInviteRequest($input: InviteRequestInput!) {
+  createInviteRequest(input: $input) {
+    error {
+      ... on FieldError {
+        field
+        message
+        ufm
+      }
+      ... on TargettedError {
+        message
+        ufm
+      }
+    }
+    inviteRequest {
+      id
+      createdAt
+      updatedAt
+      senderId
+      recepientId
+      roomId
+    }
+  }
+}

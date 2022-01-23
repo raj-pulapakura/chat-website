@@ -1,25 +1,25 @@
 import { Send } from "@mui/icons-material";
 import { Box, IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { graphqlClient } from "../../graphql/client";
 import { useCreateChatMutation, useMeQuery } from "../../graphql/generated";
-import { designSlice } from "../../store";
+import { designSlice, StoreState } from "../../store";
 
-interface ChatSenderProps {
-  roomId: string;
-}
+interface ChatSenderProps {}
 
-export const ChatSender: React.FC<ChatSenderProps> = ({ roomId }) => {
+export const ChatSender: React.FC<ChatSenderProps> = ({}) => {
   const dispatch = useDispatch();
 
-  const { data: meData } = useMeQuery(graphqlClient);
+  const currentRoomId = useSelector<StoreState>(
+    (state) => state.room.currentRoomId
+  ) as StoreState["room"]["currentRoomId"];
 
   const [message, setMessage] = React.useState("");
+  const chatSenderRef = React.useRef<HTMLDivElement>(null);
 
   const { mutateAsync: createChat } = useCreateChatMutation(graphqlClient);
-
-  const chatSenderRef = React.useRef<HTMLDivElement>(null);
+  const { data: meData } = useMeQuery(graphqlClient);
 
   React.useEffect(() => {
     const chatSender = chatSenderRef.current;
@@ -37,7 +37,11 @@ export const ChatSender: React.FC<ChatSenderProps> = ({ roomId }) => {
     if (!meData?.me.account) return;
 
     await createChat({
-      input: { text: message, senderId: meData.me.account.id, roomId },
+      input: {
+        text: message,
+        senderId: meData.me.account.id,
+        roomId: currentRoomId,
+      },
     });
 
     setMessage("");

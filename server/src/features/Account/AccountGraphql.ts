@@ -22,5 +22,5 @@ export class AccountGraphql extends BaseGraphql {
   inviteRequestsSent!: InviteRequestGraphql[];
 
   @Field(() => [InviteRequestGraphql])
-  inviteRequestReceived!: InviteRequestGraphql[];
+  inviteRequestsReceived!: InviteRequestGraphql[];
 }
