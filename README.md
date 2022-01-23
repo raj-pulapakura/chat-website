@@ -6,8 +6,6 @@ Usually for chat apps you would something like sockets for preserved connections
  - Invite friends
  - Chat together
 
-To join a room that someone else has created, the creator has to invite you, or you can join by yourself if you know the room ID.
-
 ## Tech stack:
 
  - Website: React | react-query (data-fetcher) | material-ui (component library)
