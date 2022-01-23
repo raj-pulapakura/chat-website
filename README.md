@@ -9,4 +9,4 @@ Usually for chat apps you would use something like sockets for preserved connect
 ## Tech stack:
 
  - Website: React | react-query (data-fetcher) | material-ui (component library)
- - Backend: NodeJS | Graphql | MySQL | Redis (session store) | Docker
+ - Backend: NodeJS | Graphql | MySQL | JWT for Auth | Docker
