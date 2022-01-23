@@ -10,6 +10,7 @@ import { connectToDB } from "./utils/connectToDB";
 import { AccountResolver } from "./features/Account/AccountResolver";
 import { RoomResolver } from "./features/Room/RoomResolver";
 import { ChatResolver } from "./features/Chat/ChatResolver";
+import { InviteRequestResolver } from "./features/InviteRequest/InviteRequestResolver";
 
 const main = async () => {
   const app = express();
@@ -27,15 +28,15 @@ const main = async () => {
     })
   );
 
-  // app.use((req, res, next) => {
-  //   console.log({ cookies: req.cookies });
-  //   next();
-  // });
-
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       validate: false,
-      resolvers: [AccountResolver, RoomResolver, ChatResolver],
+      resolvers: [
+        AccountResolver,
+        RoomResolver,
+        ChatResolver,
+        InviteRequestResolver,
+      ],
     }),
     context: ({ req, res }) => ({ req, res }),
   });

@@ -1,0 +1,4 @@
+fragment AccountStuff on AccountGraphql {
+  firstName
+  lastName
+}

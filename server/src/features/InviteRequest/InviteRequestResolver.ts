@@ -18,14 +18,14 @@ export class InviteRequestResolver {
     );
   }
 
-  // @Mutation(() => AcceptInviteRequestResponse)
-  // acceptInviteRequest(
-  //   @Arg("input", () => InviteRequestInput) input: InviteRequestInput
-  // ): Promise<AcceptInviteRequestResponse> {
-  //   return InviteRequestService.acceptInviteRequest(
-  //     input.senderId,
-  //     input.recepientId,
-  //     input.roomId
-  //   );
-  // }
+  @Mutation(() => AcceptInviteRequestResponse)
+  acceptInviteRequest(
+    @Arg("input", () => InviteRequestInput) input: InviteRequestInput
+  ): Promise<AcceptInviteRequestResponse> {
+    return InviteRequestService.acceptInviteRequest(
+      input.senderId,
+      input.recepientId,
+      input.roomId
+    );
+  }
 }
